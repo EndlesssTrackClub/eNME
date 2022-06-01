@@ -73,6 +73,58 @@ namespace eNME
                 "Zoomer",
             };
 
+            static public readonly List<String> _Instruments = new List<string>()
+            {
+                "Accordion",
+                "Bagpipe",
+                "Banjo",
+                "Bassoon",
+                "Bugle",
+                "Cello",
+                "Choral",
+                "Clarinet",
+                "Clavichord",
+                "Cowbell",
+                "Didgeridoo",
+                "Euphonium",
+                "Flugelhorn",
+                "Flute",
+                "Glockenspiel",
+                "Gong",
+                "Guitar",
+                "Harp",
+                "Harpsichord",
+                "Honky-Tonk",
+                "Hurdy-Gurdy",
+                "Kalimba",
+                "Kazoo",
+                "klaxon",
+                "Mellotron",
+                "Oboe",
+                "Piano",
+                "Piano",
+                "Piccolo",
+                "Pipe Organ",
+                "Recorder",
+                "Saxophone",
+                "Sousaphone",
+                "Synthesiser",
+                "Tambourine",
+                "Telephone",
+                "Theorbo",
+                "Theremin",
+                "Timpani",
+                "Trombone",
+                "Trumpet",
+                "Tuba",
+                "Ukulele",
+                "Violin",
+                "Vuvuzela",
+                "Wind Chime",
+                "Wurlitzer",
+                "Zither",
+            };
+
             static public readonly List<String> _Locales = new List<string>()
             {
                 "British",
@@ -222,6 +274,7 @@ namespace eNME
             public ProceduralSourceData( RNG32 rng )
             {
                 SubStyle        = new List<string>( _SubStyle );
+                Instruments     = new List<string>( _Instruments );
                 Locales         = new List<string>( _Locales );
                 Ages            = new List<string>( _Ages );
                 Prefix          = new List<string>( _Prefix );
@@ -229,6 +282,7 @@ namespace eNME
                 CommonStyle     = new List<string>( _CommonStyle );
 
                 rng.ShuffleList( SubStyle );    SubStyle.Reverse();     rng.ShuffleList( SubStyle );
+                rng.ShuffleList( Instruments ); Instruments.Reverse();  rng.ShuffleList( Instruments );
                 rng.ShuffleList( Locales );     Locales.Reverse();      rng.ShuffleList( Locales );
                 rng.ShuffleList( Ages );        Ages.Reverse();         rng.ShuffleList( Ages );
                 rng.ShuffleList( Prefix );      Prefix.Reverse();       rng.ShuffleList( Prefix );
@@ -237,6 +291,7 @@ namespace eNME
             }
 
             public readonly List<String> SubStyle;
+            public readonly List<String> Instruments;
             public readonly List<String> Locales;
             public readonly List<String> Ages;
             public readonly List<String> Prefix;
@@ -333,7 +388,13 @@ namespace eNME
                     if ( rng.WithPercentageChance( 60 ) )
                         return result;
                 }
+
                 if ( rng.WithPercentageChance( (ChaosMode ? 60 : 30) ) )
+                {
+                    result += data.Instruments.PopEnd();
+                    result += " ";
+                }
+                else if ( rng.WithPercentageChance( (ChaosMode ? 60 : 30) ) )
                 {
                     result += data.Locales.PopEnd();
                     if ( !result.EndsWith("-") )
