@@ -1,2 +1,3 @@
 # eNME
-Procedural music genre hijinks robot
+
+Oh, you're into *Post-Transactional Arctic Mathtrap*? That shit is so 2021
