@@ -6,9 +6,17 @@ using eNME.Procgen;
 
 namespace eNME
 {
-    static class ProceduralGenre
+    public static class ProceduralGenre
     {
-        internal class ProceduralSourceData
+        public enum GenerationSpirit
+        {
+            Safe,
+            Adventurous,
+            Untethered
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+        public class ProceduralSourceData
         {
             static public readonly List<String> _PreSubStyle = new List<string>()
             {
@@ -27,34 +35,61 @@ namespace eNME
             static public readonly List<String> _SubStyle = new List<string>()
             {
                 "Abstract",
+                "Abattoir",
+                "Aggressive",
+                "Alien",
                 "Alternative",
+                "Anarchist",
                 "Ancient",
+                "Antiquated",
+                "Artificial",
                 "Boomer",
                 "Bloated",
                 "Bubblegum",
                 "Carbon-Neutral",
+                "Catholic",
+                "Children's",
+                "Christian",
                 "Classic",
+                "Comedy",
                 "Contemporary",
                 "Cybernetic",
+                "Depressing",
+                "Distant",
                 "Doomer",
+                "Downtempo",
+                "Dystopic",
                 "Emotional",
                 "Emotionless",
+                "Energetic",
                 "Environmental",
+                "Erotic",
+                "Evil",
                 "Experimental",
                 "Expressionist",
+                "Fallen",
+                "Fantasy",
+                "Forbidden",
                 "Kawaii",
                 "Kindergarten",
                 "Garbage",
                 "Hardcore",
+                "Harsh",
+                "Haunted",
+                "Impossible",
                 "Industrial",
                 "Ironic",
                 "Mainstream",
+                "Melancholy",
                 "Minimalist",
+                "Maximalist",
                 "Misunderstood",
                 "Modern",
+                "Monarchist",
                 "Nuevo",
                 "Orchestral",
                 "School",
+                "Patriotic",
                 "Progressive",
                 "Psychedelic",
                 "Reflective",
@@ -62,12 +97,18 @@ namespace eNME
                 "Reintegrated",
                 "Residential",
                 "Romantic",
+                "Rural",
+                "Satanic",
                 "Softcore",
+                "Suburban",
+                "Symphonic",
                 "Technical",
                 "Tiresome",
                 "Traditional",
                 "Underground",
                 "Unrefined",
+                "Upbeat",
+                "Uptempo",
                 "Vintage",
                 "Willowy",
                 "Zoomer",
@@ -98,10 +139,10 @@ namespace eNME
                 "Hurdy-Gurdy",
                 "Kalimba",
                 "Kazoo",
-                "klaxon",
+                "Klaxon",
                 "Mellotron",
                 "Oboe",
-                "Piano",
+                "Otomatone",
                 "Piano",
                 "Piccolo",
                 "Pipe Organ",
@@ -119,6 +160,7 @@ namespace eNME
                 "Tuba",
                 "Ukulele",
                 "Violin",
+                "Vocal",
                 "Vuvuzela",
                 "Wind Chime",
                 "Wurlitzer",
@@ -127,23 +169,27 @@ namespace eNME
 
             static public readonly List<String> _Locales = new List<string>()
             {
-                "British",
-                "Russian",
-                "German",
-                "French",
                 "African",
+                "British",
                 "Canadian",
-                "Texan",
-                "Latin",
-                "Tropical",
-                "Regional",
-                "Northern",
-                "Southern",
                 "Eastern",
+                "European",
+                "French",
+                "G-",
+                "German",
+                "Highland",
+                "Irish",
                 "J-",
                 "K-",
-                "G-",
+                "Latin",
                 "Moon",
+                "Northern",
+                "Regional",
+                "Russian",
+                "Southern",
+                "Texan",
+                "Tropical",
+                "Welsh",
             };
 
             static public readonly List<String> _Ages = new List<string>()
@@ -152,113 +198,142 @@ namespace eNME
                 "70s",
                 "80s",
                 "90s",
+                "Bronze Age",
+                "Dark Age",
+                "Distant Future",
                 "Forgotten",
+                "Jurassic",
+                "Medieval",
+                "Near Future",
                 "Next Phase",
                 "Pandemic",
-                "Near Future",
-                "Distant Future",
-                "Medieval",
-                "Victorian",
-                "Dark Age",
-                "Bronze Age",
                 "Timeless",
-                "Jurassic",
+                "Victorian",
             };
 
             static public readonly List<String> _Prefix = new List<string>()
             {
-                "Dark",
-                "Electro",
-                "Hard",
-                "Synth",
-                "Euro",
-                "Drum",
-                "Tech",
-                "Brit",
                 "Adult",
-                "Doom",
-                "Death",
-                "Nerd",
-                "Hyper",
-                "Ultra",
-                "Cool",
-                "Smooth",
-                "Grind",
-                "Math",
-                "LoFi",
-                "Crust",
-                "Steam",
-                "Sweet",
-                "Sour",
-                "Vague",
-                "Think",
-                "Real",
-                "Quiet",
-                "Chill",
-                "Otter",
-                "Big",
-                "Small",
-                "Trad",
-                "Limp",
-                "Fuzz",
-                "Sleek",
-                "Wave",
-                "Core",
-                "Jingle",
-                "Wonky",
-                "Step",
-                "Club",
-                "Love",
-                "Glam",
-                "Laser",
-                "Future",
-                "Past",
                 "Attack",
+                "Big",
+                "Brit",
+                "Chill",
+                "Cheeky",
+                "Club",
+                "Cool",
+                "Core",
+                "Crust",
+                "Cypher",
+                "Cyber",
+                "Dark",
+                "Deep",
+                "Death",
+                "Doom",
+                "Drum",
+                "Electro",
+                "Euro",
+                "Filth",
+                "Future",
+                "Fuzz",
+                "Fury",
+                "Glam",
+                "Glitch",
+                "Grind",
+                "Grin",
+                "Hard",
+                "Hyper",
+                "Jerk",
+                "Jingle",
+                "Laser",
+                "Limp",
+                "LoFi",
+                "Love",
+                "Macro",
+                "Micro",
+                "Math",
+                "Nerd",
+                "Otter",
+                "Past",
+                "Pirate",
+                "Quiet",
+                "Real",
+                "Scream",
+                "Sleek",
+                "Small",
+                "Smooth",
+                "Speed",
+                "Sour",
+                "Steam",
+                "Step",
+                "Sweet",
+                "Synth",
+                "Tech",
+                "Think",
+                "Trad",
+                "Ultra",
+                "Vague",
+                "Vapor",
+                "Wave",
+                "Witch",
+                "Whisper",
+                "Wonky",
             };
 
             static public readonly List<String> _Suffix = new List<string>()
             {
-                "wave",
-                "core",
-                "step",
-                "dub",
+                "beam",
+                "bass",
                 "club",
-                "noise",
-                "pulse",
+                "core",
+                "dub",
+                "down",
+                "edge",
                 "feed",
                 "feel",
+                "gas",
                 "grind",
-                "vibe",
                 "mode",
+                "noise",
                 "pop",
+                "pulse",
+                "punk",
+                "rhythm",
                 "slam",
+                "step",
                 "sweep",
+                "treble",
+                "track",
+                "vibe",
                 "wash",
-                "beam"
+                "wave",
             };
 
             static public readonly List<String> _CommonStyle = new List<string>()
             {
                 "Ballad",
                 "Blues",
+                "Bop",
                 "Breaks",
                 "Country",
                 "Crunk",
                 "Dance",
-                "Drum and Bass",
                 "Drone",
+                "Drum and Bass",
                 "Dub",
-                "Funk",
                 "Folk",
+                "Funk",
+                "Garage",
                 "Gospel",
                 "Hip-Hop",
                 "House",
                 "Indie",
                 "Jazz",
+                "Jungle",
                 "Metal",
                 "Pop",
-                "Bop",
                 "Punk",
+                "Ragtime",
+                "Reggae",
                 "Rap",
                 "Rock",
                 "Salsa",
@@ -268,35 +343,41 @@ namespace eNME
                 "Swing",
                 "Techno",
                 "Trance",
+                "Trap",
             };
 
             // each instance of the data contains a shuffled copy of the lists ready for use
             public ProceduralSourceData( RNG32 rng )
             {
-                SubStyle        = new List<string>( _SubStyle );
-                Instruments     = new List<string>( _Instruments );
-                Locales         = new List<string>( _Locales );
-                Ages            = new List<string>( _Ages );
-                Prefix          = new List<string>( _Prefix );
-                Suffix          = new List<string>( _Suffix );
-                CommonStyle     = new List<string>( _CommonStyle );
-
-                rng.ShuffleList( SubStyle );    SubStyle.Reverse();     rng.ShuffleList( SubStyle );
-                rng.ShuffleList( Instruments ); Instruments.Reverse();  rng.ShuffleList( Instruments );
-                rng.ShuffleList( Locales );     Locales.Reverse();      rng.ShuffleList( Locales );
-                rng.ShuffleList( Ages );        Ages.Reverse();         rng.ShuffleList( Ages );
-                rng.ShuffleList( Prefix );      Prefix.Reverse();       rng.ShuffleList( Prefix );
-                rng.ShuffleList( Suffix );      Suffix.Reverse();       rng.ShuffleList( Suffix );
-                rng.ShuffleList( CommonStyle ); CommonStyle.Reverse();  rng.ShuffleList( CommonStyle );
+                localRng = new RNG32( rng.GenUInt32() );
             }
 
-            public readonly List<String> SubStyle;
-            public readonly List<String> Instruments;
-            public readonly List<String> Locales;
-            public readonly List<String> Ages;
-            public readonly List<String> Prefix;
-            public readonly List<String> Suffix;
-            public readonly List<String> CommonStyle;
+            RNG32   localRng;
+
+            List<String> ReseedFrom( List<String> input )
+            {
+                List<String> result = new List<string>( input );
+                localRng.ShuffleList( result );
+                result.Reverse();
+                localRng.ShuffleList( result );
+                return result;
+            }
+
+            public List<String> SubStyle        { get { if ( subStyle.Count      == 0 ) subStyle     = ReseedFrom( _SubStyle );      return subStyle; } }
+            public List<String> Instruments     { get { if ( instruments.Count   == 0 ) instruments  = ReseedFrom( _Instruments );   return instruments; } }
+            public List<String> Locales         { get { if ( locales.Count       == 0 ) locales      = ReseedFrom( _Locales );       return locales; } }
+            public List<String> Ages            { get { if ( ages.Count          == 0 ) ages         = ReseedFrom( _Ages );          return ages; } }
+            public List<String> Prefix          { get { if ( prefix.Count        == 0 ) prefix       = ReseedFrom( _Prefix );        return prefix; } }
+            public List<String> Suffix          { get { if ( suffix.Count        == 0 ) suffix       = ReseedFrom( _Suffix );        return suffix; } }
+            public List<String> CommonStyle     { get { if ( commonStyle.Count   == 0 ) commonStyle  = ReseedFrom( _CommonStyle );   return commonStyle; } }
+
+            private List<String> subStyle = new List<string>();
+            private List<String> instruments = new List<string>();
+            private List<String> locales = new List<string>();
+            private List<String> ages = new List<string>();
+            private List<String> prefix = new List<string>();
+            private List<String> suffix = new List<string>();
+            private List<String> commonStyle = new List<string>();
         }
 
 
@@ -312,120 +393,238 @@ namespace eNME
         };
 
 
-        interface Generator
+        // -------------------------------------------------------------------------------------------------------------
+        internal class GenResult
         {
-            public string Generate( ProceduralSourceData data, RNG32 rng, bool ChaosMode );
+            public GenResult( string words, int complex )
+            {
+                Words = words;
+                Complexity = complex;
+            }
+
+            public string Words;
+            public int Complexity;
         }
 
-        internal class PrimaryStyle : Generator
+
+        // -------------------------------------------------------------------------------------------------------------
+        internal interface Generator
         {
-            public string Generate( ProceduralSourceData data, RNG32 rng, bool ChaosMode )
+            public GenResult Generate( ProceduralSourceData data, RNG32 rng, GenerationSpirit spirit );
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+        // plain combinations of a style and potentially some prefixing / bonus style
+        // eg.
+        //      Hip-Hop
+        //      Hip-Hop'n'Ska
+        //      Hyper Hip-Hop
+        //
+        internal class NormalStyle : Generator
+        {
+            public GenResult Generate( ProceduralSourceData data, RNG32 rng, GenerationSpirit spirit )
             {
                 var baseStyle = data.CommonStyle.PopEnd();
+                int resultCx = 1;
 
-                if ( rng.WithPercentageChance( (ChaosMode ? 80 : 50) ) )
+                var spDoubleStyleChance = 0;
+                switch (spirit)
                 {
+                    case GenerationSpirit.Adventurous:
+                        spDoubleStyleChance = 40;
+                        break;
+                    case GenerationSpirit.Untethered:
+                        spDoubleStyleChance = 85;
+                        break;
+                }
+
+                if ( rng.WithPercentageChance( spDoubleStyleChance ) )
+                {
+                    resultCx++;
+
+                    // double-up the styles for a confusing treat
                     if ( rng.WithPercentageChance( 25 ) )
                     {
-                        if ( baseStyle.ToLower().Contains( "and" ) )
+                        var doubledStyle = data.CommonStyle.PopEnd();
+
+                        // catch stuff like "Drum and Bass" and always use another "and" to fuse them (eg. Drum and Bass and Soul)
+                        if ( baseStyle.ToLower().Contains( "and" ) ||
+                             doubledStyle.ToLower().Contains( "and" ) )
                         {
                             baseStyle += " and ";
                         }
                         else
                         {
+                            // pick some other kind of binding, like "-" or "'n'"
                             baseStyle += rng.RandomItemFrom( Bindings );
                         }
-                        baseStyle += data.CommonStyle.PopEnd();
+
+                        baseStyle += doubledStyle;
                     }
+                    // bolt on a random style prefix, like "Wonky" or "Vapor"
                     else
                     {
                         baseStyle = data.Prefix.PopEnd() + " " + baseStyle;
                     }
                 }
 
-                return baseStyle;
+                return new GenResult( baseStyle, resultCx );
             }
         }
 
+        // -------------------------------------------------------------------------------------------------------------
+        // create hot new trends by crushing a vague style Prefix and Suffix together, eg. Darkwave, Hardpop
         internal class FusedStyle : Generator
         {
-            public string Generate( ProceduralSourceData data, RNG32 rng, bool ChaosMode )
+            public GenResult Generate( ProceduralSourceData data, RNG32 rng, GenerationSpirit spirit )
             {
-                string result = rng.WithPercentageChance( (ChaosMode ? 70 : 25 ) ) ? ( data.Prefix.PopEnd() + " " ) : "";
+                int resultCx = 1;
 
-                return result + data.Prefix.PopEnd() + data.Suffix.PopEnd();
+                var spDoubleStyleChance = 0;
+                switch ( spirit )
+                {
+                    case GenerationSpirit.Adventurous:
+                        spDoubleStyleChance = 30;
+                        break;
+                    case GenerationSpirit.Untethered:
+                        spDoubleStyleChance = 80;
+                        break;
+                }
+
+                string result = "";
+
+                // potentially seed the result with another prefix too, eg. Hard Darkwave
+                if ( rng.WithPercentageChance( spDoubleStyleChance ) )
+                {
+                    result += ( data.Prefix.PopEnd() + " " );
+                    resultCx++;
+                }
+
+                return new GenResult( result + data.Prefix.PopEnd() + data.Suffix.PopEnd(), resultCx );
             }
         }
 
+        // -------------------------------------------------------------------------------------------------------------
         internal class Complicator : Generator
         {
-            public string Generate( ProceduralSourceData data, RNG32 rng, bool ChaosMode )
+            public GenResult Generate( ProceduralSourceData data, RNG32 rng, GenerationSpirit spirit )
             {
+                int resultCx = 0;
+
                 string result = "";
 
-                if ( rng.WithPercentageChance( (ChaosMode ? 40 : 10) ) )
+                // in Safe mode, keep things simple with maybe just one or either Ages or Locales
+                if ( spirit == GenerationSpirit.Safe )
+                {
+                    if ( rng.WithPercentageChance( 50 ) )
+                    {
+                        if ( rng.WithPercentageChance( 50 ) )
+                            result = data.Ages.PopEnd();
+                        else
+                            result = data.Locales.PopEnd();
+
+                        if ( !result.EndsWith( "-" ) )
+                            result += " ";
+
+                        resultCx++;
+                    }
+                    return new GenResult( result, resultCx );
+                }
+
+                // 
+                var spMaxNumberOfComponents = 2;
+                var spMoreChaotic = false;
+                switch ( spirit )
+                {
+                    case GenerationSpirit.Untethered:
+                        spMaxNumberOfComponents = 3;
+                        spMoreChaotic = true;
+                        break;
+                }
+
+                if ( rng.WithPercentageChance( (spMoreChaotic ? 40 : 10) ) )
                 {
                     result += data.Ages.PopEnd();
                     if ( !result.EndsWith( "-" ) )
                         result += " ";
 
-                    if ( rng.WithPercentageChance( 60 ) )
-                        return result;
+                    resultCx++;
+
+                    spMaxNumberOfComponents--;
+                    if ( spMaxNumberOfComponents <= 0 || rng.WithPercentageChance( 60 ) )
+                        return new GenResult( result, resultCx );
                 }
-                if ( rng.WithPercentageChance( (ChaosMode ? 90 : 60) ) )
+                if ( rng.WithPercentageChance( (spMoreChaotic ? 90 : 60) ) )
                 {
-                    if ( rng.WithPercentageChance( (ChaosMode ? 70 : 25) ) )
+                    if ( rng.WithPercentageChance( (spMoreChaotic ? 70 : 25) ) )
                     {
                         result += rng.RandomItemFrom( ProceduralSourceData._PreSubStyle );
                         if ( !result.EndsWith( "-" ) )
                             result += " ";
+
+                        resultCx++;
                     }
 
                     result += data.SubStyle.PopEnd();
                     if ( !result.EndsWith( "-" ) )
                         result += " ";
 
-                    if ( rng.WithPercentageChance( 60 ) )
-                        return result;
+                    resultCx++;
+
+                    spMaxNumberOfComponents--;
+                    if ( spMaxNumberOfComponents <= 0 || rng.WithPercentageChance( 60 ) )
+                        return new GenResult( result, resultCx );
                 }
 
-                if ( rng.WithPercentageChance( (ChaosMode ? 60 : 30) ) )
+                if ( rng.WithPercentageChance( (spMoreChaotic ? 75 : 30) ) )
                 {
                     result += data.Instruments.PopEnd();
                     result += " ";
+
+                    resultCx++;
                 }
-                else if ( rng.WithPercentageChance( (ChaosMode ? 60 : 30) ) )
+                else if ( rng.WithPercentageChance( (spMoreChaotic ? 75 : 30) ) )
                 {
                     result += data.Locales.PopEnd();
                     if ( !result.EndsWith("-") )
                         result += " ";
+
+                    resultCx++;
                 }
 
-                return result;
+                return new GenResult( result, resultCx );
             }
         }
 
-        public static List<string> Generate( RNG32 rng, int num )
+        static readonly NormalStyle primaryStyle    = new NormalStyle();
+        static readonly FusedStyle fusedStyle       = new FusedStyle();
+        static readonly Complicator complicator     = new Complicator();
+
+        public static List<string> Generate( ProceduralSourceData sourceData, RNG32 rng, List<GenerationSpirit> generations )
         {
-            ProceduralSourceData sourceData = new ProceduralSourceData( rng );
-
-            PrimaryStyle primaryStyle = new PrimaryStyle();
-            FusedStyle fusedStyle = new FusedStyle();
-            Complicator complicator = new Complicator();
-
-            List<string> results = new List<string>(num);
-            for ( int i =0; i<num; i++ )
+            List<string> results = new List<string>(generations.Count);
+            foreach ( var gs in generations )
             {
-                string style = "";
+                GenResult style;
 
-                if ( rng.WithPercentageChance( 65 ) ) 
-                    style = primaryStyle.Generate( sourceData, rng, rng.GenBool() );
+                if ( rng.WithPercentageChance( 50 ) )
+                    style = primaryStyle.Generate( sourceData, rng, gs );
                 else
-                    style = fusedStyle.Generate( sourceData, rng, rng.GenBool() );
+                    style = fusedStyle.Generate( sourceData, rng, gs );
 
-                var complex = complicator.Generate( sourceData, rng, rng.GenBool() );
+                GenResult complex = complicator.Generate( sourceData, rng, gs );
 
-                results.Add( complex + style );
+                string generated = complex.Words + style.Words;
+
+                if ( ( style.Complexity + complex.Complexity ) == 1 )
+                {
+                    if ( rng.WithPercentageChance( 25 ) )
+                        generated = sourceData.Locales.PopEnd() + " " + generated;
+                    else
+                        generated = sourceData.Instruments.PopEnd() + " " + generated;
+                }
+
+                results.Add( generated );
             }
 
             return results;

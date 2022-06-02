@@ -12,9 +12,10 @@ namespace eNME
         public static string SubscriptionKey;
         public static List<string> RunQuery(string queryString)
         {
-            var uriQuery = "https://api.bing.microsoft.com/" + "/v7.0/images/search" + "?q=" + Uri.EscapeDataString(queryString);
+            var uriQuery = "https://api.bing.microsoft.com/" + "/v7.0/images/search" + "?count=40&q=" + Uri.EscapeDataString(queryString);
 
             WebRequest request = HttpWebRequest.Create(uriQuery);
+            request.Timeout = 1000;
             request.Headers["Ocp-Apim-Subscription-Key"] = SubscriptionKey;
             HttpWebResponse response = (HttpWebResponse)request.GetResponseAsync().Result;
             string json = new StreamReader(response.GetResponseStream()).ReadToEnd();
