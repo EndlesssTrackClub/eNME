@@ -2,11 +2,8 @@
 using Discord;
 using Discord.Commands;
 
-using System.Linq;
 using System.IO;
-using System.Drawing;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Threading.Tasks;
 
 using eNME.Services;
@@ -17,18 +14,6 @@ namespace eNME.Modules
     {
         public GenreService GenreService { get; set; }
 
-
-        public static void CompressBitmapToStream( Stream stream, Bitmap image, long quality )
-        {
-            using ( EncoderParameters encoderParameters = new EncoderParameters( 1 ) )
-            using ( EncoderParameter encoderParameter = new EncoderParameter( Encoder.Quality, quality ) )
-            {
-                ImageCodecInfo codecInfo = ImageCodecInfo.GetImageDecoders().First(codec => codec.FormatID == System.Drawing.Imaging.ImageFormat.Jpeg.Guid);
-                encoderParameters.Param[0] = encoderParameter;
-                image.Save( stream, codecInfo, encoderParameters );
-                stream.Seek( 0, SeekOrigin.Begin );
-            }
-        }
 
         [Command( "genre" )]
         public async Task GenerateGenre( params string[] objects )
@@ -59,9 +44,9 @@ namespace eNME.Modules
             List< GenreSuggestion > suggestions = await GenreService.GenerateSelectionOfGenres(choices);
             foreach ( var sg in suggestions )
             {
-                using ( var imageStream = new MemoryStream(1024 * 128) )
+                using ( var imageStream = new MemoryStream( 1024 * 256 ) )
                 {
-                    CompressBitmapToStream( imageStream, sg.Image, 85L );
+                    Utils.CompressBitmapToStream( imageStream, sg.Image, 97L );
                     await Context.Channel.SendFileAsync( imageStream, sg.Genre.ToLower().Replace(' ', '_') + ".jpg" );
                 }
             }

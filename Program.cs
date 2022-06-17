@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using eNME.Services;
 using eNME.Procgen;
 using System.Threading;
-using System.Drawing;
 using System.IO;
 
 namespace eNME
@@ -23,17 +22,23 @@ namespace eNME
         static void Main( string[] args )
                    => new Program().MainAsync().GetAwaiter().GetResult();
 
+        static ulong ChosenGuildSID = 0;
+        static ulong ChosenChannelSID = 0;
 
+        static ServiceProvider provisionedServices;
 
         public async Task MainAsync()
         {
-            RNG32 rng = new RNG32( Hash.Reduce64To32( (ulong) DateTime.Now.Ticks ) );
-
             var config = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
                 .AddUserSecrets<Program>()
                 .Build();
 
+            BingImageSearch.SubscriptionKey = config.GetConnectionString( "Bing1" );
+
+#if QUICKTEST
+            RNG32 rng = new RNG32( Hash.Reduce64To32( (ulong) DateTime.Now.Ticks ) );
             var sourceData = new ProceduralGenre.ProceduralSourceData( rng );
 
             var defaultGenerations = new List<ProceduralGenre.GenerationSpirit>() {
@@ -49,33 +54,96 @@ namespace eNME
                 foreach ( var v in suggestions )
                     Console.WriteLine( v );
             }
+#endif
 
-            BingImageSearch.SubscriptionKey = config.GetConnectionString( "Bing1" );
+            var guildSID    = config.GetConnectionString( "DiscordGuildSID" );
+            var channelSID  = config.GetConnectionString( "DiscordChannelSID" );
 
+            if ( !string.IsNullOrEmpty( guildSID ) && 
+                 !string.IsNullOrEmpty( channelSID ) )
+            {
+                ChosenGuildSID = ulong.Parse( guildSID );
+                ChosenChannelSID = ulong.Parse( channelSID );
+            }
 
             var discordBotToken = config.GetConnectionString( "DiscordBotToken" );
 
-            // You should dispose a service provider created using ASP.NET
-            // when you are finished using it, at the end of your app's lifetime.
-            // If you use another dependency injection framework, you should inspect
-            // its documentation for the best way to do this.
-            using ( var services = ConfigureServices() )
+            using ( provisionedServices = ConfigureServices() )
             {
-                var client = services.GetRequiredService<DiscordSocketClient>();
+                var client = provisionedServices.GetRequiredService<DiscordSocketClient>();
 
                 client.Log += LogAsync;
-                services.GetRequiredService<CommandService>().Log += LogAsync;
+                provisionedServices.GetRequiredService<CommandService>().Log += LogAsync;
 
-                // Tokens should be considered secret data and never hard-coded.
-                // We can read from the environment variable to avoid hard coding.
                 await client.LoginAsync( TokenType.Bot, discordBotToken );
                 await client.StartAsync();
 
-                // Here we initialize the logic required to register our commands.
-                await services.GetRequiredService<CommandHandlingService>().InitializeAsync();
+                await provisionedServices.GetRequiredService<CommandHandlingService>().InitializeAsync();
+
+                if ( ChosenGuildSID != 0 && ChosenChannelSID != 0 )
+                    client.GuildAvailable += Client_GuildAvailable;
 
                 await Task.Delay( Timeout.Infinite );
             }
+        }
+
+        private async Task Client_GuildAvailable( SocketGuild arg )
+        {
+            if ( arg.Id == ChosenGuildSID )
+            {
+                Console.WriteLine( " -- generating new genre as default, posting to chosen channel -- " );
+
+                var genreChannel =  arg.GetChannel( ChosenChannelSID ) as ISocketMessageChannel;
+                if ( genreChannel != null )
+                {
+                    try
+                    {
+                        var rng = new RNG32( Hash.Reduce64To32( (ulong)DateTime.Now.Ticks ) );
+
+                        var potentialSpirits = Enum.GetNames( typeof( ProceduralGenre.GenerationSpirit ) );
+                        var chosenSpiritName = rng.RandomItemFrom( potentialSpirits );
+
+                        var chosenSpirit = Enum.Parse<ProceduralGenre.GenerationSpirit>( chosenSpiritName );
+                        List<ProceduralGenre.GenerationSpirit> choices = new List<ProceduralGenre.GenerationSpirit>()
+                        {
+                            chosenSpirit
+                        };
+
+                        var gs = provisionedServices.GetService<Services.GenreService>();
+
+                        await genreChannel.SendMessageAsync( $"The new genre will be .. *{chosenSpirit}*" );
+
+                        List < GenreSuggestion > suggestions = await gs.GenerateSelectionOfGenres(choices);
+                        foreach ( var sg in suggestions )
+                        {
+                            using ( var imageStream = new MemoryStream( 1024 * 256 ) )
+                            {
+                                Utils.CompressBitmapToStream( imageStream, sg.Image, 97L );
+                                await genreChannel.SendFileAsync( imageStream, sg.Genre.ToLower().Replace( ' ', '_' ) + ".jpg" );
+                            }
+                        }
+
+                        gs.SerializeState();
+                    }
+                    catch ( Exception ex )
+                    {
+                        Console.WriteLine( "Failed to generate a genre on demand" );
+                        Console.WriteLine( ex.Message );
+                        Console.WriteLine( ex.StackTrace );
+                        Console.WriteLine( ex.InnerException );
+                    }
+                }
+                else
+                {
+                    Console.WriteLine( "Could not resolve chosen channel SID as ISocketMessageChannel" );
+                }
+            }
+
+            await Task.Delay( 2000 );
+
+            Environment.Exit( 0 );
+
+            await Task.CompletedTask;
         }
 
         private Task LogAsync( LogMessage log )

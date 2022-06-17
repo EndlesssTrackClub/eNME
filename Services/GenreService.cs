@@ -33,8 +33,14 @@ namespace eNME.Services
 
             _rng = new RNG32( Hash.Reduce64To32( (ulong) DateTime.Now.Ticks ) );
             _pds = new ProceduralGenre.ProceduralSourceData( _rng );
+            _pds.LoadFromDisk();
 
             _hatchStyles = Enum.GetValues( typeof( HatchStyle ) );
+        }
+
+        public void SerializeState()
+        {
+            _pds.SaveToDisk();
         }
 
         // list of words we can use to make the image search vaguely more interesting / weird / on brand
@@ -42,12 +48,12 @@ namespace eNME.Services
         {
             "",
             " music genre",
-            " in the news",
+            " wallpaper",
             " audio album",
             " thoughts vision",
             " concept art",
             " product idea",
-            " fan art detailed",
+            " ai generated art",
             " film art",
         };
 
@@ -67,11 +73,13 @@ namespace eNME.Services
                 List<string> bingResults;
                 for (; ; )
                 {
+                    string genreText = v;
+
                     try
                     {
                         searchMix = _rng.RandomItemFrom( SearchMixture );
 
-                        bingResults = BingImageSearch.RunQuery( v + searchMix );
+                        bingResults = BingImageSearch.RunQuery( genreText + searchMix );
                         if ( bingResults.Count > 5 )
                             break;
                     }
@@ -81,6 +89,9 @@ namespace eNME.Services
                     }
 
                     await Task.Delay( 250 );
+                    // increase chance of a hit by removing the genre. nvm. better to actually finish executing.
+
+                    genreText = _rng.RandomItemFrom( SearchMixture );
                 }
 
                 Bitmap suggestionImage = new Bitmap( 768, 768 );

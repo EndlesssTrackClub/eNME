@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 
 using eNME.Procgen;
+using System.IO;
 
 namespace eNME
 {
@@ -346,10 +348,70 @@ namespace eNME
                 "Trap",
             };
 
-            // each instance of the data contains a shuffled copy of the lists ready for use
             public ProceduralSourceData( RNG32 rng )
             {
                 localRng = new RNG32( rng.GenUInt32() );
+            }
+
+            private class OnDisk
+            {
+                public List<String> subStyle    { get; set; }
+                public List<String> instruments { get; set; }
+                public List<String> locales     { get; set; }
+                public List<String> ages        { get; set; }
+                public List<String> prefix      { get; set; }
+                public List<String> suffix      { get; set; }
+                public List<String> commonStyle { get; set; }
+            }
+
+            static private string PersistenceFilename = @"ProceduralSourceData.json";
+
+            public void SaveToDisk()
+            {
+                try
+                {
+                    OnDisk od = new OnDisk();
+                    od.subStyle = this.subStyle;
+                    od.instruments = this.instruments;
+                    od.locales = this.locales;
+                    od.ages = this.ages;
+                    od.prefix = this.prefix;
+                    od.suffix = this.suffix;
+                    od.commonStyle = this.commonStyle;
+
+                    string json = JsonConvert.SerializeObject(od, Formatting.Indented);
+                    File.WriteAllText( PersistenceFilename, json );
+                }
+                catch ( Exception ex )
+                {
+                    Console.WriteLine( "PSD::SaveToDisk failed\n" + ex.Message );
+                }
+                Console.WriteLine( "PSD::SaveToDisk complete" );
+            }
+
+            public void LoadFromDisk()
+            {
+                if ( File.Exists( PersistenceFilename ) )
+                {
+                    try
+                    {
+                        var jsonData = File.ReadAllText( PersistenceFilename );
+                        var odResult = JsonConvert.DeserializeObject<OnDisk>( jsonData );
+
+                        this.subStyle = odResult.subStyle;
+                        this.instruments = odResult.instruments;
+                        this.locales = odResult.locales;
+                        this.ages = odResult.ages;
+                        this.prefix = odResult.prefix;
+                        this.suffix = odResult.suffix;
+                        this.commonStyle = odResult.commonStyle;
+                    }
+                    catch ( Exception ex )
+                    {
+                        Console.WriteLine( "PSD::LoadFromDisk failed\n" + ex.Message );
+                    }
+                }
+                Console.WriteLine( "PSD::LoadFromDisk complete" );
             }
 
             RNG32   localRng;
